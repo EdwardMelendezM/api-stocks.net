@@ -1,0 +1,22 @@
+# Ignorar carpetas de compilación
+bin/
+obj/
+
+# Ignorar archivos de configuración sensibles
+appsettings.json
+appsettings.Development.json
+
+# Ignorar archivos de publicación
+publish/
+
+# Ignorar paquetes NuGet descargados
+*.nupkg
+packages/
+
+# Ignorar configuraciones de Visual Studio
+.vs/
+.vscode/
+
+# Ignorar archivos temporales o de caché
+*.log
+*.tmp
