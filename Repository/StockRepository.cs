@@ -20,7 +20,7 @@ namespace api.Repository
 
         public Task<List<Stock>> GetStocks()
         {
-            return _context.Stocks.ToListAsync();
+            return _context.Stocks.Include(c=>c.Comments).ToListAsync();
         }
 
         public async Task<Stock> CreateStock(Stock stock)
@@ -44,7 +44,7 @@ namespace api.Repository
 
         public async Task<Stock> GetStockById(int id)
         {
-            var stockModel =  await _context.Stocks.FindAsync(id);
+            var stockModel =  await _context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(s => s.Id == id);
             return stockModel;
         }
 
@@ -64,6 +64,11 @@ namespace api.Repository
             await _context.SaveChangesAsync();
             return existingStock;
 
+        }
+
+        public async Task<bool> StockExists(int id)
+        {
+            return await _context.Stocks.AnyAsync(s => s.Id == id);
         }
     }
 }
