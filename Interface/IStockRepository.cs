@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Dtos.Stock;
+using api.Helpers;
 using api.Models;
 
 namespace api.interfaces
 {
     public interface IStockRepository
     {
-        Task<List<Stock>> GetStocks();
+        Task<List<Stock>> GetStocks(QueryObject query);
         Task<Stock> GetStockById(int id);
         Task<Stock> CreateStock(Stock stock);
         Task<Stock> UpdateStock(int id, UpdateStockRequestDto stock);

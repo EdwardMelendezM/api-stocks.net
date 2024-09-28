@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Stock;
+using api.Helpers;
 using api.interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,33 @@ namespace api.Repository
             _context = context;
         }
 
-        public Task<List<Stock>> GetStocks()
+        public Task<List<Stock>> GetStocks(QueryObject query)
         {
-            return _context.Stocks.Include(c=>c.Comments).ToListAsync();
+            var stocks = _context.Stocks.AsQueryable();
+            if(!string.IsNullOrWhiteSpace(query.Symbol))
+            {
+                stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
+            }
+            if(!string.IsNullOrWhiteSpace(query.CompanyName))
+            {
+                stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
+            }
+            if(!string.IsNullOrWhiteSpace(query.SortBy))
+            {
+                if(query.SortBy.Equals("symbol", StringComparison.OrdinalIgnoreCase))
+                {
+                    stocks = query.IsAscdening ? stocks.OrderBy(s => s.Symbol) : stocks.OrderByDescending(s => s.Symbol);
+                }
+                if(query.SortBy.Equals("companyName", StringComparison.OrdinalIgnoreCase))
+                {
+                    stocks = query.IsAscdening ? stocks.OrderBy(s => s.CompanyName) : stocks.OrderByDescending(s => s.CompanyName);
+                }
+            }
+            var skip = (query.Page - 1) * query.PageSize;
+            
+            return stocks.Include(c => c.Comments).Skip(skip).Take(query.PageSize).ToListAsync();
         }
+       
 
         public async Task<Stock> CreateStock(Stock stock)
         {
