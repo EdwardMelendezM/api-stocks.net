@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Stock;
+using api.interfaces;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +16,17 @@ namespace api.Controllers
     public class StockController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public StockController(ApplicationDbContext context)
+        private readonly IStockRepository _stockRepository;
+        public StockController(ApplicationDbContext context, IStockRepository stockRepository)
         {
             _context = context;
+            _stockRepository = stockRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetStock()
         {
-            var stock = await _context.Stocks.ToListAsync();
+            var stock = await _stockRepository.GetStocks();
             var stocksDto = stock.Select(s => s.ToStockDto());
             return Ok(stocksDto);
         }
@@ -32,9 +35,9 @@ namespace api.Controllers
         public async Task<IActionResult> GetStockById(int id)
         {
             //Add list of comments to the stock
-            var stock = await _context.Stocks.FindAsync(id);
+            var stock = await _stockRepository.GetStockById(id);
 
-            if(stock == null)
+            if (stock == null)
             {
                 return NotFound();
             }
@@ -45,20 +48,14 @@ namespace api.Controllers
         public async Task<IActionResult> CreateStock([FromBody] CreateStockRequestDto stockDto)
         {
             var stockModel = stockDto.ToStockFromCreateDto();
-            await _context.Stocks.AddAsync(stockModel);
-            await _context.SaveChangesAsync();
+            await _stockRepository.CreateStock(stockModel);
             return CreatedAtAction(nameof(GetStockById), new { id = stockModel.Id }, stockModel.ToStockDto());
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStock(int id, [FromBody] UpdateStockRequestDto stockDto)
         {
-            var stockModel = await _context.Stocks.FindAsync(id);
-            if(stockModel == null)
-            {
-                return NotFound();
-            }
-            stockModel = stockModel.ToStockFromUpdateDto(stockDto);
+            var stockModel = await _stockRepository.UpdateStock(id, stockDto);
             await _context.SaveChangesAsync();
             return Ok(stockModel.ToStockDto());
         }
@@ -66,13 +63,7 @@ namespace api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStock(int id)
         {
-            var stockModel = await _context.Stocks.FindAsync(id);
-            if(stockModel == null)
-            {
-                return NotFound();
-            }
-            _context.Stocks.Remove(stockModel);
-            await _context.SaveChangesAsync();
+            await _stockRepository.DeleteStock(id);
             return NoContent();
         }
     }
