@@ -16,24 +16,24 @@ namespace api.Data
             
         }
 
-        public DbSet<Stock> Stocks { get; set; } = null!;
-        public DbSet<Comment> Comments { get; set; } = null!;
-        public DbSet<Portfolios> Portalofios { get; set; } = null!;
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Portfolios>().HasKey(p => new {p.AppUserId, p.StockId});
+            builder.Entity<Portfolio>(x => x.HasKey(p => new { p.AppUserId, p.StockId }));
 
-            builder.Entity<Portfolios>()
-                .HasOne(p => p.AppUser)
-                .WithMany(p => p.Portalofios)
+            builder.Entity<Portfolio>()
+                .HasOne(u => u.AppUser)
+                .WithMany(u => u.Portfolios)
                 .HasForeignKey(p => p.AppUserId);
 
-            builder.Entity<Portfolios>()
-                .HasOne(p => p.Stock)
-                .WithMany(p => p.Portalofios)
+            builder.Entity<Portfolio>()
+                .HasOne(u => u.Stock)
+                .WithMany(u => u.Portfolios)
                 .HasForeignKey(p => p.StockId);
 
             List<IdentityRole> roles = new List<IdentityRole>

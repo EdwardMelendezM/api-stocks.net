@@ -26,6 +26,7 @@ namespace api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetStock([FromQuery] QueryObject query)
         {
             var stock = await _stockRepository.GetStocks(query);

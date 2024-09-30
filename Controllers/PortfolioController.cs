@@ -40,7 +40,7 @@ namespace api.Controllers
 
             if (appUser == null) return Unauthorized();
 
-            var userPortfolio = _portfolioRepository.GetUserPortfolio(appUser);
+            var userPortfolio = await _portfolioRepository.GetUserPortfolio(appUser);
             return Ok(userPortfolio);
         }
     }
