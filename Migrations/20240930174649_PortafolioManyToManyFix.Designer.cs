@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240930174649_PortafolioManyToManyFix")]
+    partial class PortafolioManyToManyFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "30bd6e21-fadb-43db-a019-30c07d2c63a6",
+                            Id = "8ae1e454-f4d0-489e-bce2-25d81465478a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "9eda4d87-e281-44e7-9258-9208c2528502",
+                            Id = "12cca2a1-ecb7-4c31-abd3-52a85cee6875",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -266,10 +269,10 @@ namespace api.Migrations
 
                     b.HasIndex("StockId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comment");
                 });
 
-            modelBuilder.Entity("api.Models.Portfolios", b =>
+            modelBuilder.Entity("api.Models.Portalofio", b =>
                 {
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
@@ -281,7 +284,7 @@ namespace api.Migrations
 
                     b.HasIndex("StockId");
 
-                    b.ToTable("Portfolios");
+                    b.ToTable("Portalofio");
                 });
 
             modelBuilder.Entity("api.Models.Stock", b =>
@@ -315,7 +318,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Stocks");
+                    b.ToTable("Stock");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -386,7 +389,7 @@ namespace api.Migrations
                     b.Navigation("Stock");
                 });
 
-            modelBuilder.Entity("api.Models.Portfolios", b =>
+            modelBuilder.Entity("api.Models.Portalofio", b =>
                 {
                     b.HasOne("api.Models.AppUser", "AppUser")
                         .WithMany("Portalofios")

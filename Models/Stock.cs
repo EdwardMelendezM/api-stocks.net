@@ -5,7 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace api.Models
-{ 
+{
+    [Table("Stocks")]
     public class Stock
     {
         public int Id {get;set;}
@@ -18,5 +19,6 @@ namespace api.Models
         public string Industry { get; set; } = string.Empty;
         public long MarketCap { get; set; }
         public List<Comment> Comments { get; set; } = new List<Comment>();
+        public List<Portfolios> Portalofios { get; set; } = new List<Portfolios>();
     }
 }
