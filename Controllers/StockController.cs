@@ -30,7 +30,7 @@ namespace api.Controllers
         public async Task<IActionResult> GetStock([FromQuery] QueryObject query)
         {
             var stock = await _stockRepository.GetStocks(query);
-            var stocksDto = stock.Select(s => s.ToStockDto());
+            var stocksDto = stock.Select(s => s.ToStockDto()).ToList();
             return Ok(stocksDto);
         }
 

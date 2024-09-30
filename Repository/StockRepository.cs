@@ -21,7 +21,7 @@ namespace api.Repository
 
         public Task<List<Stock>> GetStocks(QueryObject query)
         {
-            var stocks = _context.Stocks.AsQueryable();
+            var stocks = _context.Stocks.Include(c=>c.Comments).ThenInclude(a=>a.AppUser).AsQueryable();
             if(!string.IsNullOrWhiteSpace(query.Symbol))
             {
                 stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));

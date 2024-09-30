@@ -3,8 +3,8 @@ bin/
 obj/
 
 # Ignorar archivos de configuración sensibles
-appsettings.json
-appsettings.Development.json
+# appsettings.json
+# appsettings.Development.json
 
 # Ignorar archivos de publicación
 publish/

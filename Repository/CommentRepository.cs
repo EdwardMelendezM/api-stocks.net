@@ -26,13 +26,13 @@ namespace api.Repository
 
         public Task<Comment?> GetCommentById(int id)
         {
-            var comment = _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
+            var comment = _context.Comments.Include(c => c.AppUser).FirstOrDefaultAsync(c => c.Id == id);
             return comment;
         }
 
         public async Task<List<Comment>> GetComments()
         {
-            return await _context.Comments.ToListAsync();
+            return await _context.Comments.Include(c=>c.AppUser).ToListAsync();
         }
 
         public async Task<Comment> UpdateComment(Comment comment)
