@@ -35,6 +35,7 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetStockById(int id)
         {
             //Add list of comments to the stock
