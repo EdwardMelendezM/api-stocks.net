@@ -43,5 +43,62 @@ namespace api.Controllers
             var userPortfolio = await _portfolioRepository.GetUserPortfolio(appUser);
             return Ok(userPortfolio);
         }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddPortfolio(string symbol)
+        {
+            var username = User.GetUseName();
+            if (username == null) return Unauthorized();
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            if (appUser == null) return Unauthorized();
+
+            var stock = await _stockRepository.GetStockBySymbol(symbol);
+            if (stock == null) return BadRequest("Stock not found");
+
+            var userPortfolio = await _portfolioRepository.GetUserPortfolio(appUser);
+            if(userPortfolio.Any(p => p.Symbol.ToLower() == symbol.ToLower())) return BadRequest("Stock already in portfolio");
+
+            var portfolio = new Portfolio
+            {
+                StockId = stock.Id,
+                AppUserId = appUser.Id,
+            };
+
+            await _portfolioRepository.AddStockToPortfolio(portfolio);
+
+            if (portfolio == null) return StatusCode(500, "Failed to add stock to portfolio");
+
+            return Ok(portfolio);
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> RemovePortfolio(string symbol)
+        {
+            var username = User.GetUseName();
+            if (username == null) return Unauthorized();
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            if (appUser == null) return Unauthorized();
+
+            var stock = await _stockRepository.GetStockBySymbol(symbol);
+            if (stock == null) return BadRequest("Stock not found");
+
+            var stocks = await _portfolioRepository.GetUserPortfolio(appUser);
+            if(!stocks.Any(p => p.Symbol.ToLower() == symbol.ToLower())) return BadRequest("Stock not in portfolio");
+
+            var filteredStock = stocks.Where(p => p.Symbol.ToLower() == symbol.ToLower());
+            
+            if (filteredStock.Count() == 1){
+                await _portfolioRepository.RemoveStockFromPortfolio(appUser, symbol);
+            }
+            else  {
+                return BadRequest("Stock not in your portfolio");
+            }
+            return Ok();
+        }
     }
 }
